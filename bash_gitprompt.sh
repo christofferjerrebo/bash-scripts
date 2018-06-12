@@ -56,4 +56,25 @@ git_unstaged() {
   fi
 }
 
-export PS1="\[\033[00m\]\w\[\033[96m\]\$(parse_git_branch)\[\033[92m\]\$(git_staged)\[\033[91m\]\$(git_unstaged) \[\033[92m\]$\[\033[00m\] "
+git_remote() {
+  if $(! git status -s &> /dev/null)
+  then
+    echo ""
+  else
+    stats=$(git status --porcelain --branch)
+    read -r line <<< "$stats"
+    remoteStats=""
+    if [[ "$line" = *"[ahead "* ]] && [[ "$line" = *"[behind "* ]]; then
+      remoteStats="↑↓"
+    elif [[ "$line" = *"[ahead "* ]]; then
+      remoteStats="↑"
+    elif [[ "$line" = *"[behind "* ]]; then
+      remoteStats="↓"
+    fi
+    if ! [ -z "$remoteStats" ]; then
+      echo -e " $remoteStats"
+    fi
+  fi
+}
+
+export PS1="\[\033[00m\]\w\[\033[96m\]\$(parse_git_branch)\[\033[92m\]\$(git_staged)\[\033[91m\]\$(git_unstaged)\[\033[93m\]\$(git_remote) \[\033[92m\]$\[\033[00m\] "
