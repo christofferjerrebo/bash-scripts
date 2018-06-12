@@ -12,12 +12,12 @@ git_staged() {
     deletedStaged=0
     stats=$(git status --porcelain)
     while IFS='' read -r line || [[ -n "$line" ]]; do
-      status=${line:0:3}
-      if [[ "$status" == 'A  ' ]]; then
+      status=${line:0:1}
+      if [[ "$status" == 'A' ]]; then
         addedStaged=$((addedStaged + 1))
-      elif [[ "$status" == 'M  ' ]]; then
+      elif [[ "$status" == 'M' ]]; then
         modifiedStaged=$((modifiedStaged + 1))
-      elif [[ "$status" == 'D  ' ]]; then
+      elif [[ "$status" == 'D' ]]; then
         deletedStaged=$((deletedStaged + 1))
       fi
     done <<< "$stats"
@@ -39,12 +39,12 @@ git_unstaged() {
     deleted=0
     stats=$(git status --porcelain)
     while IFS='' read -r line || [[ -n "$line" ]]; do
-      status=${line:0:3}
-      if [[ "$status" == '?? ' ]]; then
+      status=${line:1:2}
+      if [[ "$status" == '? ' ]]; then
         untracked=$((untracked + 1))
-      elif [[ "$status" == ' M ' ]]; then
+      elif [[ "$status" == 'M ' ]]; then
         modified=$((modified + 1))
-      elif [[ "$status" == ' D ' ]]; then
+      elif [[ "$status" == 'D ' ]]; then
         deleted=$((deleted + 1))
       fi
     done <<< "$stats"
