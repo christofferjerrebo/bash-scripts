@@ -61,14 +61,15 @@ git_remote() {
   then
     echo ""
   else
-    stats=$(git status --porcelain --branch)
-    read -r line <<< "$stats"
+    branchStats=$(git status --porcelain --branch)
+    read -r line <<< "$branchStats"
+    stats=$(echo "$line" | sed "s/.*\[ \(.*\)\]/\1/")
     remoteStats=""
-    if [[ "$line" = *"[ahead "* ]] && [[ "$line" = *"[behind "* ]]; then
+    if [[ "$stats" = *"ahead"* ]] && [[ "$stats" = *"behind"* ]]; then
       remoteStats="↑↓"
-    elif [[ "$line" = *"[ahead "* ]]; then
+    elif [[ "$stats" = *"ahead"* ]]; then
       remoteStats="↑"
-    elif [[ "$line" = *"[behind "* ]]; then
+    elif [[ "$stats" = *"behind"* ]]; then
       remoteStats="↓"
     fi
     if ! [ -z "$remoteStats" ]; then
